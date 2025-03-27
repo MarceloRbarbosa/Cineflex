@@ -16,7 +16,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Content />}/>
         <Route path='/sessoes/:idMovie' element={<MovieSessions />} />
-        <Route path='/assentos' element={<SeatSelection />} />
+        <Route path='/assentos/:idShowTime' element={<SeatSelection />} />
         <Route path='/sucesso' element={<Finished />} />
       </Routes>
     </BrowserRouter>

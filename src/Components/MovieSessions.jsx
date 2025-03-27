@@ -15,37 +15,40 @@ function MovieSessions(){
     },[idMovie])
 
     if( movie === null){
-        <div>Carregando ...</div>
+        return <div>Carregando ...</div>
     }
     return (
-        <>
+        <Content>
             <Notice>
                 <h1>Selecione o horário</h1>
             </Notice>
             {movie.days.map((day, index) =>(
                 <Sessions key={index}>
                     <Days>
-                        <h3>{day.weekday}, {day.date}</h3>
-                    <Line />
-                    </Days>
-                    <Time to='/assentos'>
-                        <h2>10:00</h2>
-                        <h2>15:00</h2>
-                        <h2>19:00</h2>
-                    </Time> 
+                        <h3>{day.weekday}, {day.date}</h3>                 
+                    </Days>  
+                    <Line />       
+                    {day.showtimes.map(showtime => (
+                    <Time to={`/assentos/${showtime.id}`} key={showtime.id}>
+                        <span>{showtime.name}</span>                           
+                    </Time>
+                    ))}                             
                 </Sessions>  
             ))};                                                                         
-        </>      
+        </Content>      
             )
         }
 
  export default MovieSessions
 
-        
-        const Notice = styled.div`
+        const Content = styled.div`
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+        `
+        const Notice = styled.div`
+            display: flex;
             height: 80px;
             margin-top: 75px;
         
@@ -58,13 +61,20 @@ function MovieSessions(){
                 letter-spacing: 4%;
             }
         `
-        const Days = styled.div`
+        const Sessions = styled.div`
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-            color: white;
+        background-color: #2b2d36;
+        border-radius: 8px;
+        width: 340px;
+        margin : 10px 0px 20px 10px;
 
+        `
+
+        const Days = styled.div`       
+            color: white;
             h3{
                 font-family: "Sarala", sans-serif;
                 font-weight:400 ;
@@ -75,41 +85,20 @@ function MovieSessions(){
             width: 300px;
             border: solid 1px #4e5a65;
         `
-        
-        const Sessions = styled.div`
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background-color: #2b2d36;
-        border-radius: 8px;
-        width: 340px;
-        height: 150px;
-        margin : 10px 0px 20px 10px;
-
-        `
         const Time = styled(Link)`
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        text-decoration: none;
-            h2{
-                
-                display: flex;
-                align-items: center;
-                padding: 15px;
-                margin: 20px 10px 20px 10px;
-               font-family: "Sarala", sans-serif;
-               font-weight: 400;
-               font-size: 16px;
-               line-height: 100%;
-               letter-spacing: 4%;
-               padding: 15px;
-               color: #EE897f;
-               border: solid 2px #EE897f;
-               border-radius: 4px;
-              
-            }
+            display: flex;          
+            text-decoration: none;
+            margin: 5px;
+        span{             
+            font-family: "Sarala", sans-serif;
+            line-height: 100%;
+            letter-spacing: 4%;
+            padding: 15px;
+            color: #EE897f;
+            border: solid 2px #EE897f;
+            border-radius: 4px;         
+        }
         `
+         
 
 

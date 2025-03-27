@@ -1,90 +1,95 @@
 import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function SeatSelection(){
+    const [seats, setSeats] = useState(null);
+    const [selectedSeats , setSelectedSeats] = useState([]);
+    const [name, setName] = useState('');
+    const [cpf, setCpf]= useState('');
+    const { idShowTime }  = useParams();
+
+    useEffect (()=>{
+        axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idShowTime}/seats`)
+            .then(res => setSeats(res.data))
+            .catch(err => console.log(err.response.data))
+    },[idShowTime])
+
+
+function toggleSeat(seat){
+    if(!seat.isAvailable){
+        alert('Esse assento não está disponível')
+        return;
+    }
+    if(selectedSeats.includes(seat.id)){
+        setSelectedSeats(selectedSeats.filter(seatId => seatId !== seat.id))
+    }else {
+        setSelectedSeats([...selectedSeats, seat.id]);
+    }
+}
+
+
+function submitForm(event){
+    event.preventDefault()
+
+   if (selectedSeats.length === 0){
+    alert("Nenhum assento escolhido");
+    return;
+   }
+   const body = { ids: selectedSeats, name, cpf}
+   
+   axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", body)
+   .then(res => console.log(res.data))
+   .catch(err => console.log(err.response.data))
+   }
+
+
+    if(seats === null){
+        return <div> Carregando ... </div>
+    }
+
     return(
         <>
             <Notice>
                 <h1>Selecione o(s) assentos</h1>
             </Notice>
             <Seats>
-                <Seat>
-                    <h2>1</h2>
-                </Seat>
-                <Seat>
-                    <h2>2</h2>
-                </Seat>
-                <Seat>
-                    <h2>3</h2>
-                </Seat>
-                <Seat>
-                    <h2>4</h2>
-                </Seat>
-                <Seat>
-                    <h2>5</h2>
-                </Seat>
-                <Seat>
-                    <h2>6</h2>
-                </Seat>
-                <Seat>
-                    <h2>7</h2>
-                </Seat>
-                <Seat>
-                    <h2>8</h2>
-                </Seat>
-                <Seat>
-                    <h2>9</h2>
-                </Seat>
-                <Seat>
-                    <h2>10</h2>
-                </Seat>
-                <Seat>
-                    <h2>1</h2>
-                </Seat>
-                <Seat>
-                    <h2>2</h2>
-                </Seat>
-                <Seat>
-                    <h2>3</h2>
-                </Seat>
-                <Seat>
-                    <h2>4</h2>
-                </Seat>
-                <Seat>
-                    <h2>5</h2>
-                </Seat>
-                <Seat>
-                    <h2>6</h2>
-                </Seat>
-                <Seat>
-                    <h2>7</h2>
-                </Seat>
-                <Seat>
-                    <h2>8</h2>
-                </Seat>
-                <Seat>
-                    <h2>9</h2>
-                </Seat>
-                <Seat>
-                    <h2>10</h2>
-                </Seat>
+                {seats.seats.map(seat =>(
+                    <Seat 
+                    key={seat.id} 
+                    $isAvailable={seat.isAvailable}
+                    $isSelected ={selectedSeats.includes(seat.id)}
+                    onClick={()=> seat.isAvailable && toggleSeat(seat)}>
+                        <h2>{seat.name}</h2>
+                    </Seat>            
+                ))}
                 <Line />
                </Seats>
                <Clients>
-                <Input>
-                    <h3>Nome do Comprador(a)</h3>
-                    <input />
-                </Input>
-                <Input>
-                    <h3>CPF do comprador(a)</h3>
-                    <input />
-                </Input>
-                <Button to='/sucesso'> 
-                    <h4>Reservar assento(s)</h4>
-                 </Button>
-               </Clients>
+                <Form onSubmit={submitForm}> 
+                        <Input htmlFor="name">Nome do Comprador(a)</Input>
+                        <input 
+                            required
+                            id="name" 
+                            name="name"
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                            placeholder="Digite seu nome ..."
+                        />
+                        <Input  htmlFor='cpf'> CPF do comprador(a)</Input>
+                        <input 
+                            required
+                            id="cpf" 
+                            name="cpf"
+                            value={cpf}
+                            onChange={e => setCpf(e.target.value)}
+                            placeholder="Digite seu CPF ..."
+                        />
+                        <Button type="submit"> Reservar assento(s)</Button>
+                 </Form>
+                 
+                </Clients>
             
         </>      
             )
@@ -123,13 +128,16 @@ const Seat = styled.div`
     height: 26px;
     border-radius: 12px;
     border: solid 1px #808f9d;
-    background-color: #9db899;
+    background-color: ${({ $isAvailable, $isSelected }) =>
+         $isSelected ? '#EE897F' : 
+         $isAvailable ? '#9db899' : '#2b2d36'};
+        
 
     h2{
         font-size: 11px;
         font-weight: 400;
         line-height: 100%;
-        color: #2b2d36;
+        color: #2B2D36;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -146,27 +154,35 @@ const Clients = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-
-
     input {
         width: 340px;
         height: 40px;
         border-radius: 8px;
-        border: 1px;
+        border: 1px;    
+    &::placeholder {
+        font-family: "Roboto", sans-serif;
+        color: #afafaf;
+        font-size: 16px;
+        font-weight: 400;
+        font-style: italic;
+        line-height: 100%;
+        padding: 5px;
+    } 
     }
 
 `
-const Input = styled.div`
-h3{
+const Form = styled.form`
+    display: flex;
+    flex-direction: column;
+  
+`
+const Input = styled.label`
     color: white;
     font-family: "Sarala", sans-serif;
     font-size: 16px;
-    margin-bottom: 0px;
-
-}
-    
+    margin-bottom: 0px;   
 `
-const Button = styled(Link)`
+const Button = styled.button`
 width: 340px;
 height: 42px;
 border-radius: 8px;
