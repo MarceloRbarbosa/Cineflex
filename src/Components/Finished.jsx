@@ -1,10 +1,14 @@
 import styled from "styled-components";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 
 function Finished(){
+    const location = useLocation();
+    const purchaseData = location.state;
+
+
+
     return(
         <Content>
             <Notice>
@@ -13,16 +17,17 @@ function Finished(){
             <Movie>
                 <p>Filme e Sessão</p>
                 <Line />            
-                <h2>Homem-Aranha</h2>
-                <h2>22/03/2024 às 21:00</h2>    
+                <h2>{purchaseData.movie}</h2>
+                <h2>{purchaseData.date} às {purchaseData.time}</h2>    
                 <p>Ingressos</p>
                 <Line />
-                <h2>Assento 15</h2>
-                <h2> Assento 16</h2>
+                {purchaseData.seats.map((seat, index)=> (
+                    <h2 key={index}>Assento {seat} </h2>
+                ))}
                 <p>Comprador(a)</p>
                 <Line />  
-                <h2> Nome: João</h2>
-                <h2>CPF:111.111.111-11</h2>
+                <h2> Nome : {purchaseData.name}</h2>
+                <h2>CPF : {purchaseData.cpf}</h2>
             </Movie>
             <Button to='/'>
                 <h4>Voltar</h4>

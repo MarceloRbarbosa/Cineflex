@@ -55,6 +55,7 @@ const Notice = styled.div`
 const Movies = styled.div`
 display: flex;
 flex-wrap: wrap;
+justify-content: center;
 margin: 10px;
 `
 const Movie = styled(Link)`

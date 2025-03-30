@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function SeatSelection(){
     const [seats, setSeats] = useState(null);
@@ -9,12 +9,14 @@ function SeatSelection(){
     const [name, setName] = useState('');
     const [cpf, setCpf]= useState('');
     const { idShowTime }  = useParams();
+    const navigate = useNavigate()
 
     useEffect (()=>{
         axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idShowTime}/seats`)
             .then(res => setSeats(res.data))
             .catch(err => console.log(err.response.data))
     },[idShowTime])
+
 
 
 function toggleSeat(seat){
@@ -40,8 +42,18 @@ function submitForm(event){
    const body = { ids: selectedSeats, name, cpf}
    
    axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", body)
-   .then(res => console.log(res.data))
-   .catch(err => console.log(err.response.data))
+   .then(res => {
+    const purchaseData={
+        movie: seats.movie.title,
+        date: seats.day.date,
+        time: seats.name,
+        name: name,
+        cpf: cpf,
+        seats: selectedSeats.map(id => seats.seats.find(seat => seat.id === id).name)
+    };
+    navigate("/sucesso", { state: purchaseData });
+   })
+   .catch(err => console.log(err.response.data));
    }
 
 
@@ -60,7 +72,7 @@ function submitForm(event){
                     key={seat.id} 
                     $isAvailable={seat.isAvailable}
                     $isSelected ={selectedSeats.includes(seat.id)}
-                    onClick={()=> seat.isAvailable && toggleSeat(seat)}>
+                    onClick={()=> toggleSeat(seat)}>
                         <h2>{seat.name}</h2>
                     </Seat>            
                 ))}
@@ -87,10 +99,8 @@ function submitForm(event){
                             placeholder="Digite seu CPF ..."
                         />
                         <Button type="submit"> Reservar assento(s)</Button>
-                 </Form>
-                 
+                 </Form>                
                 </Clients>
-            
         </>      
             )
         }
@@ -127,9 +137,9 @@ const Seat = styled.div`
     width: 26px;
     height: 26px;
     border-radius: 12px;
-    border: solid 1px #808f9d;
+    border:${({$isSelected})=> $isSelected ? 'solid 2px #ee987f' : 'solid 1px #808f9d'};
     background-color: ${({ $isAvailable, $isSelected }) =>
-         $isSelected ? '#EE897F' : 
+         $isSelected ? '#fadbc5' : 
          $isAvailable ? '#9db899' : '#2b2d36'};
         
 

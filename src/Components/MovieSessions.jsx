@@ -27,12 +27,14 @@ function MovieSessions(){
                     <Days>
                         <h3>{day.weekday}, {day.date}</h3>                 
                     </Days>  
-                    <Line />       
+                    <Line />
+                    <Container>      
                     {day.showtimes.map(showtime => (
                     <Time to={`/assentos/${showtime.id}`} key={showtime.id}>
                         <span>{showtime.name}</span>                           
                     </Time>
-                    ))}                             
+                    ))}  
+                    </Container>                            
                 </Sessions>  
             ))};                                                                         
         </Content>      
@@ -72,7 +74,14 @@ function MovieSessions(){
         margin : 10px 0px 20px 10px;
 
         `
-
+        const Container = styled.div`
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin: 15px 0px 10px 0px;
+        `
         const Days = styled.div`       
             color: white;
             h3{
