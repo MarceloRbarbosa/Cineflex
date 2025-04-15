@@ -2,7 +2,7 @@
 
 **CineFlex** é um sistema mobile de compra de ingressos de cinema. Desenvolvi esse projeto como parte de um curso prático em React, focado no consumo de API, roteamento e estilização com styled-components — tudo com uma interface voltada para dispositivos móveis!
 
-📱 Acesse aqui: [ Deploy do Cineflex no Vercel](https://cineflex-tau-one.vercel.app/)
+📱 Acesse aqui: [ https://cineflex-tau-one.vercel.app/](https://cineflex-tau-one.vercel.app/)
 
 ---
 
